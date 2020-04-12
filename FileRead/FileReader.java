@@ -15,7 +15,7 @@ class FileReader {
     public static void main(String[] args) {
         
         //string variable containing filename
-        String inputFile = "inputFile1.txt";
+        String inputFile = "inputFile.txt";
 
         //Create ArrayList (java.util) to hold results
         ArrayList<String> lines = new ArrayList<String>();
@@ -59,8 +59,10 @@ class FileReader {
         catch (Exception e) {
             //force error by changing above line to String inputFile = "doesnotexist.txt";
             System.out.println("Error: " + e.getMessage());
+            
             //A stack trace is a detailed account of the error, can be very useful in determining the cause of the error
-            e.printStackTrace();
+            //e.printStackTrace();
+
             //because we have handled the error, the program will continue, if we didn't have a try..catch block the program would fail
         }
 
