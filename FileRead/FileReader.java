@@ -14,6 +14,8 @@ class FileReader {
     //program entry point
     public static void main(String[] args) {
         
+        ParseItemFromString("45.99;Saw;See;three;poo");
+
         //string variable containing filename
         String inputFile = "inputFile.txt";
 
@@ -78,6 +80,16 @@ class FileReader {
         }
         else{
             System.out.println("The ArrayList is empty");
+        }
+    }
+
+    private static void ParseItemFromString(String line){
+
+        String[] y = line.split(";");
+        System.out.println(y.length);
+        System.out.println(y[y.length-1]);
+        for (String s : y) {
+            System.out.println(s);
         }
     }
 }

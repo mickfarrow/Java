@@ -1,0 +1,6 @@
+1.0;Cookies
+0.5;Milk
+3.1415;Crystal Meth
+ABC;Potatoes
+4.15:Meat
+0.15;Candy
