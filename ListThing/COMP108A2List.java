@@ -321,26 +321,24 @@ class COMP108A2List {
 	static void moveToHead(int id) {
 	
 		Node prev = head;
-		Node foundNode = null;
 		Node curr;
 
 		if(head.data != id){
 
-			curr = head;
+			curr = head.next;
 
 			while(curr != null){
 
 				if (curr.data == id){
-					foundNode = curr;
 					prev.next = curr.next;
+					curr.next = head;
+					curr = null;
 				}
-				prev = curr;
-				curr = curr.next;
-			}
-			
-			if(foundNode!=null)
-			{
-				insertNodeHead(foundNode);
+				else
+				{
+					prev = curr;
+					curr = curr.next;
+				}
 			}
 		}
 	}
