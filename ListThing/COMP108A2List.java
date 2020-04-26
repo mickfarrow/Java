@@ -20,6 +20,7 @@ freqCount():
 
 import java.util.*;
 import java.io.*;
+import java.text.Bidi;
 
 
 class COMP108A2List {
@@ -33,16 +34,48 @@ class COMP108A2List {
 
 	public static int[] reqData = new int[MaxReqCount]; // store the requests, accessible to all methods
 
-
-	// DO NOT change the main method
-	public static void main(String[] args) throws Exception {
-		
-		int[] initData = new int[MaxInitCount];
-
+	//2 different ways to generate test data
+	static void GenerateTestData(int[] initData)
+	{
 		initCount = 0;
 		reqCount = 0;
 		head = null;
 		tail = null;
+
+		emptyList();
+
+		try {
+			initCount = 3;
+			if (initCount > MaxInitCount || initCount <= 0)
+				System.exit(0);
+
+				initData[0] = 20;
+				initData[1] = 30;
+				initData[2] = 10;
+
+			reqCount = 6;
+			reqData = new int[reqCount];
+
+			reqData[0] = 20;
+			reqData[1] = 30;
+			reqData[2] = 5;
+			reqData[3] = 30;
+			reqData[4] = 5;
+			reqData[5] = 20;
+			
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	static void GenerateRandomData(int[] initData)
+	{
+		initCount = 0;
+		reqCount = 0;
+		head = null;
+		tail = null;
+
+		emptyList();
 
 		try {
 			initCount = 10;
@@ -75,6 +108,16 @@ class COMP108A2List {
 		catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+	}
+
+	// DO NOT change the main method
+	// Main method only changed to genrate test data without keyboard input
+	public static void main(String[] args) throws Exception {
+		
+		int[] initData = new int[MaxInitCount];
+
+		//GenerateTestData(initData);
+		GenerateRandomData(initData);
 
 		try {
 			System.out.println("appendIfMiss...");
@@ -83,11 +126,8 @@ class COMP108A2List {
 			for (int i=initCount-1; i>=0; i--) {
 				insertNodeHead(new Node(initData[i]));
 			}
+
 			appendIfMiss();
-
-			printList();
-			printRequests();
-
 		}
 		catch (Exception e) {
 			System.out.println("appendIfMiss exception! " + e);
@@ -102,9 +142,6 @@ class COMP108A2List {
 				insertNodeHead(new Node(initData[i]));
 			}
 			moveToFront();
-
-			printList();
-			printRequests();
 		}
 		catch (Exception e) {
 			System.out.println("moveToFront exception!\t" + e.getMessage());
@@ -118,14 +155,11 @@ class COMP108A2List {
 			for (int i=initCount-1; i>=0; i--) {
 				insertNodeHead(new Node(initData[i]));
 			}
-			freqCount();
 
-			printList();
-			printRequests();
-			printStats();
+			freqCount();
 		}
 		catch (Exception e) {
-			System.out.println("freqCount exception!");
+			System.out.println("freqCount exception! " + e.getMessage());
 		}
 						
 	}
@@ -135,20 +169,33 @@ class COMP108A2List {
 		/*
 		Task 1.1 (15%) Implement the appendIfMiss() method that appends a missed ﬁle to the end of the list and does not reorganise the list.
 		*/
+		
+		//System.out.print("Before ");
+		//printList();
+
 		for (int i=0; i < reqData.length; i++) {
+
 			Node curr = head;
+
 			boolean found = false;
 			while (curr != null && !found) {
-				curr.freq++;
+				
 				if(curr.data==reqData[i]){
 					found = true;
+					curr = null;
 				}
-				curr = curr.next;
+				else{
+					curr = curr.next;
+				}				
 			}
 			if(!found){
 				insertNodeTail(new Node(reqData[i]));
-			}			
+			}	
 		}
+
+		//System.out.print("After ");
+		//printList();
+
 	}
 
 	// move the file requested to the beginning of the list
@@ -158,12 +205,36 @@ class COMP108A2List {
 		When moving a node in the list, you have to make sure that the next ﬁeld of aﬀected nodes, head, and tail are updated properly. 
 		*/
 		//append missing - we have to do this to make sure we have the full list of files
-		appendIfMiss();
+
+		//System.out.print("Before ");
+		//printList();
 
 		for (int i = 0; i < reqData.length; i++)
 		{
-			moveToHead(reqData[i]);
+
+			Node curr = head;
+			boolean found = false;
+
+			while(curr != null)
+			{
+				if(curr.data == reqData[i]){
+					moveToHead(reqData[i]);
+					found = true;
+					curr = null;
+				}
+				else{
+					curr = curr.next;
+				}
+			}
+
+			if(!found){
+				insertNodeHead(new Node(reqData[i]));
+			}
 		}
+
+		//System.out.print("After ");
+		//printList();
+
 	}
 	
 	// move the file requested so that order is by non-increasing frequency
@@ -174,30 +245,77 @@ class COMP108A2List {
 		Importantly when the requested ﬁle has the same frequency count as other ﬁles, the request ﬁle should be placed at the end among them. 
 		Again make sure you update next, head, tail properly.
 		*/
+		// System.out.print("Before search ");
+		// printList();
 
-		appendIfMiss();
+		for (int i = 0; i < reqData.length; i++)
+		{
 
-		//add items to an array for sorting
+			Node curr = head;
+			boolean found = false;
 
-		Node curr;
-		curr = head.next;
-		Node mostFrequent = head;
-		
-		try{
-
-			while (curr != null) {
-				if(curr.freq >= mostFrequent.freq){
-					mostFrequent = curr;
-					moveToHead(curr.data);
+			while(curr != null)
+			{
+				curr.freq++;
+				if(curr.data == reqData[i]){
+					moveToHead(reqData[i]);
+					found = true;
+					curr = null;
 				}
-				curr = curr.next;				
+				else{
+					curr = curr.next;
+				}
+			}
+
+			if(!found){
+				insertNodeHead(new Node(reqData[i]));
 			}
 		}
-		catch(Exception ex){
-			System.out.println(ex.getMessage());
+
+		// System.out.print("After search");
+		printList();
+
+		sortList();
+
+		printList();
+		//printFrequency();
+		
+	}
+
+	static void sortList(){
+		
+		int count = 0;
+		Node n = head;
+		while(n!=null){
+			count++;
+			n = n.next;
 		}
 
+		Node[] nodes = new Node[count];
+		Node curr = head;
 
+		for (int i = 0; i < count; i++) {
+			nodes[i] = new Node(curr.data);
+			nodes[i].freq = curr.freq;
+			curr = curr.next;
+		}
+
+		Arrays.sort(nodes);
+
+		emptyList();
+		for (int i=nodes.length-1; i>=0; i--) {
+			Node newNode = new Node(nodes[i].data);
+			newNode.freq = nodes[i].freq;
+			insertNodeHead(newNode);
+		}
+
+		System.out.print("List: ");
+		for (int i = 0; i < count; i++) 
+		{
+			
+			System.out.print(nodes[i].data + " ");
+		}
+		System.out.print("\r\n");
 	}
 
 	static void moveToHead(int id) {
@@ -206,14 +324,12 @@ class COMP108A2List {
 		Node foundNode = null;
 		Node curr;
 
-		head.freq++;
-
 		if(head.data != id){
 
 			curr = head;
 
 			while(curr != null){
-				curr.freq++;
+
 				if (curr.data == id){
 					foundNode = curr;
 					prev.next = curr.next;
@@ -283,20 +399,19 @@ class COMP108A2List {
 		System.out.println();
 	}
 
-	static void printStats() {
+	static void printFrequency() {
 		
 		Node curr;
 
-		System.out.println("Stats: ");
-		System.out.println("File\tFreq.");
+		System.out.print("Frequency: ");
 		curr = head;
 		while (curr != null) {
-			System.out.println(curr.data + "\t" + curr.freq);
+			System.out.print(curr.freq + " ");
 			curr = curr.next;
 		}
 		System.out.println();
 	}
-	
+
 	// DO NOT change this method
 	static void emptyList() {
 		
@@ -308,7 +423,7 @@ class COMP108A2List {
 
 // You should not edit this class unless you want to implement
 // a doubly linked list.
-class Node {
+class Node implements Comparable{
 	public int data; 
 	public Node next;
 	public int freq;
@@ -318,6 +433,13 @@ class Node {
 		next = null;
 		data = i;
 		freq = 1;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		
+		Node n = (Node) o;
+		return this.freq - n.freq;
 	}
 }
 
