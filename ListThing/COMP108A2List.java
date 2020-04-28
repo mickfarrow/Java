@@ -35,6 +35,39 @@ class COMP108A2List {
 	public static int[] reqData = new int[MaxReqCount]; // store the requests, accessible to all methods
 
 	//2 different ways to generate test data
+	static void GenerateStandardData(int[] initData)
+	{
+		initCount = 0;
+		reqCount = 0;
+		head = null;
+		tail = null;
+
+		emptyList();
+
+		try {
+			initCount = 3;
+			if (initCount > MaxInitCount || initCount <= 0)
+				System.exit(0);
+
+				initData[0] = 20;
+				initData[1] = 30;
+				initData[2] = 10;
+
+			reqCount = 6;
+			reqData = new int[reqCount];
+
+			reqData[0] = 20;
+			reqData[1] = 30;
+			reqData[2] = 5;
+			reqData[3] = 30;
+			reqData[4] = 5;
+			reqData[5] = 20;
+			
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
 	static void GenerateTestData(int[] initData)
 	{
 		initCount = 0;
@@ -116,8 +149,8 @@ class COMP108A2List {
 		
 		int[] initData = new int[MaxInitCount];
 
-		//GenerateTestData(initData);
-		GenerateRandomData(initData);
+		GenerateTestData(initData);
+		//GenerateRandomData(initData);
 
 		try {
 			System.out.println("appendIfMiss...");
@@ -207,7 +240,7 @@ class COMP108A2List {
 		//append missing - we have to do this to make sure we have the full list of files
 
 		//System.out.print("Before ");
-		//printList();
+		printList();
 
 		for (int i = 0; i < reqData.length; i++)
 		{
@@ -218,7 +251,7 @@ class COMP108A2List {
 			while(curr != null)
 			{
 				if(curr.data == reqData[i]){
-					moveToHead(reqData[i]);
+					moveToHead(curr);
 					found = true;
 					curr = null;
 				}
@@ -233,7 +266,7 @@ class COMP108A2List {
 		}
 
 		//System.out.print("After ");
-		//printList();
+		printList();
 
 	}
 	
@@ -246,7 +279,7 @@ class COMP108A2List {
 		Again make sure you update next, head, tail properly.
 		*/
 		// System.out.print("Before search ");
-		// printList();
+		//printList();
 
 		for (int i = 0; i < reqData.length; i++)
 		{
@@ -258,7 +291,7 @@ class COMP108A2List {
 			{
 				curr.freq++;
 				if(curr.data == reqData[i]){
-					moveToHead(reqData[i]);
+					moveToHead(curr);
 					found = true;
 					curr = null;
 				}
@@ -318,20 +351,19 @@ class COMP108A2List {
 		System.out.print("\r\n");
 	}
 
-	static void moveToHead(int id) {
+	static void moveToHead(Node node) {
 	
-		Node prev = head;
-		Node curr;
+		if(node != head){
 
-		if(head.data != id){
-
-			curr = head.next;
+			Node prev = head;
+			Node curr = head.next;
 
 			while(curr != null){
 
-				if (curr.data == id){
+				if (curr.data == node.data){
 					prev.next = curr.next;
 					curr.next = head;
+					head = curr;
 					curr = null;
 				}
 				else
